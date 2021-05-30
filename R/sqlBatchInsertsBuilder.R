@@ -1,29 +1,21 @@
-sqlBatchInsertsBuilder <- function(df, table, vals_tmpl, cols = NULL, nrows = 1000, preview = FALSE) {
+sqlBatchInsertsBuilder <- function(df, table, vals_tmpl, nrows = 1000, preview = FALSE) {
   
-  # filter data frame by specified columns if provided
-  if(!is.null(cols)) df = df[, cols, drop = FALSE]
+  # compare no of placeholders to no of columns in data frame
+  nplaceholders = lengths(regmatches(vals_tmpl, gregexpr("\\?", vals_tmpl)))
+  if(nplaceholders > ncol(df)) {
+    stop("There are more placeholders than specified columns in the data frame")
+  }
   
-  # identify numeric and character columns
-  numeric_cols = names(which(sapply(df, is.numeric)))
-  character_cols = names(which(sapply(df, is.character)))
-  
-  # change numeric columns to character 
-  # change NA values of numeric columns to single quotes 
-  df[, numeric_cols] = sapply(df[, numeric_cols], as.character)
-  df[, numeric_cols][is.na(df[, numeric_cols])] <- "''"
-  
-  # change NA values of character columns to empty string
-  df[, character_cols][is.na(df[, character_cols])] <- ""
+  # identify non character columns and cast to character
+  # change NA values to NULL
+  non_character_cols = names(df)[!sapply(df, is.character)]
+  df[, non_character_cols] = sapply(df[, non_character_cols], as.character)
+  df[is.na(df)] <- "NULL"
   
   # sprintf over data frame values using flattened values template
   flattened_vals_tmpl = gsub("\n|\\s+", " ", vals_tmpl)
   flattened_vals_tmpl = gsub("\\?", "%s", flattened_vals_tmpl)
-  values = tryCatch({
-    do.call(sprintf, c(flattened_vals_tmpl, df))
-  }, error = function(err) {
-    err$message = "There are more placeholders than there are columns in the data frame"
-    stop(err)
-  })
+  values = do.call(sprintf, c(flattened_vals_tmpl, df))
 
   # create batches by number of rows
   ngroups = ceiling(length(values)/nrows)
