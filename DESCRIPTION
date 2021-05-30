@@ -1,0 +1,10 @@
+Package: sqlBatchInsertR
+Type: Package
+Title: What the package does (short line)
+Version: 1.0
+Date: 2018-08-07
+Author: Nicholas Alonzo
+Maintainer: Nicholas Alonzo <n.alonzo324@yahoo.com>
+Description: This is an extension to the RODBC function sqlQuery()
+Suggests: 
+License: What license is it under?
