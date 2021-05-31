@@ -17,7 +17,7 @@ sqlBatchInserts <- function(db_conn, df, table, vals_tmpl, nrows = 1000) {
     }
   })
 
-  status_list = sapply(batch_results, `[[`, 1)
+  status_list = lapply(batch_results, `[[`, 1)
   error_list = status_list[lengths(status_list) != 0]
 
   if (length(error_list) > 0) {
