@@ -15,7 +15,7 @@ sqlRowsAffected()
 After a statement is successfully executed by \code{sqlBatchInserts()} or \code{sqlQueryTran()}, the rows affected are stored in the enviroment, \code{rowsaff_env}.
 }
 \value{
-Returns an integer, reflecting the number of rows affected.
+Returns an integer, reflecting the number of rows affected after a SQL statement.
 }
 \references{
 %% ~put references to the literature/web site here ~

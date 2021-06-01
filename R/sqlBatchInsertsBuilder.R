@@ -1,4 +1,4 @@
-sqlBatchInsertsBuilder <- function(df, table, vals_tmpl, nrows = 1000) {
+sqlBatchInsertsBuilder <- function(df, dbtable, vals_tmpl, nrecords = 1000) {
   
   # compare no of placeholders to no of columns in data frame
   nplaceholders = lengths(regmatches(vals_tmpl, gregexpr("\\?", vals_tmpl)))
@@ -25,13 +25,13 @@ sqlBatchInsertsBuilder <- function(df, table, vals_tmpl, nrows = 1000) {
   values = do.call(sprintf, c(flattened_vals_tmpl, df))
 
   # create batches by number of rows
-  ngroups = ceiling(nrow(df)/nrows)
-  batches = rep(1:ngroups, each = nrows, len = nrow(df))
+  ngroups = ceiling(nrow(df)/nrecords)
+  batches = rep(1:ngroups, each = nrecords, len = nrow(df))
   batch_values = split(values, batches)
   
   # return batches of "INSERT INTO" statements
   lapply(batch_values, function(values) {
     rows = paste(values, collapse = ", ")
-    paste0("INSERT INTO ", table, " VALUES ", rows, ";")
+    paste0("INSERT INTO ", dbtable, " VALUES ", rows, ";")
   })
 }

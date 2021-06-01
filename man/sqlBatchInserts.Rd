@@ -10,9 +10,9 @@
 \code{sqlBatchInsertsBuilder()} converts a data frame to parameterized \code{INSERT INTO} statements for \code{sqlBatchInserts()}.
 }
 \usage{
-sqlBatchInserts(db_conn, df, table, vals_tmpl, nrows = 1000)
+sqlBatchInserts(db_conn, df, dbtable, vals_tmpl, nrecords = 1000)
 
-sqlBatchInsertsBuilder(df, table, vals_tmpl, nrows = 1000)
+sqlBatchInsertsBuilder(df, dbtable, vals_tmpl, nrecords = 1000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ A open database connection handle returned by RODBC's \code{odbcConnect()} or \c
 
 A data frame containing values to be inserted into a database table through a open database connection. **The data frame should contain only character or numeric values.
 }
-  \item{table}{
+  \item{dbtable}{
 (character(1))
 
 The database table name accessible from a open database connection.
@@ -36,10 +36,10 @@ The database table name accessible from a open database connection.
 
 The template for the values to be parameterized on using "?" as the placeholder. If the value is a string data type then wrap the placeholder in single quotes. If the value is a numeric data type then leave the placeholder as is. The number of placeholders must match the number of columns in the dataframe otherwise an error is returned.
 }
-  \item{nrows}{
+  \item{nrecords}{
 (integer(1) | default = 1000)
 
-The number of rows to be inserted per batch. As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000." Depending on the size (bytes) of the values per row being inserted, adjusting the number of rows may speed up insertion into the database table.
+The number of records to be inserted per batch. As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000." Depending on the size (bytes) of the values per row being inserted, adjusting the number of rows may speed up insertion into the database table.
 }
 }
 \details{
@@ -63,15 +63,15 @@ Inserting data into a temporary table has been the best use for the function. It
 }
 
 \seealso{
-\code{\link{sqlStatementErrors}}
+\code{\link{sqlRowsAffected}}, \code{\link{sqlStatementErrors}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
 driver = "Driver={ODBC Driver 17 for SQL Server};"
 server = "Server=127.0.0.1,1401;"
 database = "Database=testdb;"
-uid = "UID=sa;"
-pwd = "PWD=password;"
+uid = "UID=testuser;"
+pwd = "PWD=testpassword;"
 
 connection_string = paste0(driver, server, database, uid, pwd)
 db_conn = RODBC::odbcDriverConnect(connection = connection_string)
@@ -90,7 +90,7 @@ values_template = "(?, '?', ?, '?')"
 
 # Test 1 - Without constraints on columns
 create_table_statement = "
-CREATE TABLE #dftest (
+CREATE TABLE #dbtest (
   nums INT, 
   chars CHAR(1), 
   nums2 INT, 
@@ -98,14 +98,15 @@ CREATE TABLE #dftest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dftest", values_template, nrows = 5)
-RODBC::sqlQuery(db_conn, "SELECT * FROM #dftest;")
-RODBC::sqlQuery(db_conn, "DROP TABLE #dftest;")
+sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlRowsAffected()
+RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
+RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
 
 # Test 2 - With constraint on columns
 create_table_statement = "
-CREATE TABLE #dftest (
+CREATE TABLE #dbtest (
   nums INT NOT NULL, 
   chars CHAR(1), 
   nums2 INT, 
@@ -113,12 +114,14 @@ CREATE TABLE #dftest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dftest", values_template, nrows = 5)
+sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
 sqlStatementErrors()
-RODBC::sqlQuery(db_conn, "DROP TABLE #dftest;")
+sqlRowsAffected()
+RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
+RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
 
-RODBC::close(db_conn)
+RODBC::odbcClose(channel = db_conn)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
