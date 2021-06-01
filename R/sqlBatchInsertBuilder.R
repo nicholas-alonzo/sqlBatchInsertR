@@ -1,4 +1,4 @@
-sqlBatchInsertsBuilder <- function(df, dbtable, vals_tmpl, nrecords = 1000) {
+sqlBatchInsertBuilder <- function(df, dbtable, vals_tmpl, nrecords = 1000) {
   
   # compare no of placeholders to no of columns in data frame
   nplaceholders = lengths(regmatches(vals_tmpl, gregexpr("\\?", vals_tmpl)))

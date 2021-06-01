@@ -1,8 +1,8 @@
 \name{sqlTransaction}
 \alias{sqlBatchInsertR}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-Be prompted to commit or rollback a SQL statement
+Be prompted to commit a SQL statement
 }
 \description{
 Execute a SQL statement through a transaction and be prompted to commit or rollback the results.
@@ -10,7 +10,7 @@ Execute a SQL statement through a transaction and be prompted to commit or rollb
 \usage{
 sqlTransaction(db_conn, statement, prompt = TRUE, addl_text = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{db_conn}{
 (RODBC)
@@ -27,7 +27,7 @@ The SQL statement, primarily \code{UPDATE}, \code{INSERT}, or \code{DELETE} comm
 
 If \code{prompt = TRUE}, the number of rows affected is displayed and a prompt for committing the transaction is asked. 
 
-If \code{prompt = FALSE} the transaction is commited without knowing the number of rows affected until \code{sqlRowsAffected()} is called.
+If \code{prompt = FALSE} the transaction is commited without knowing the number of rows affected until \code{sqlRowsAffected()} is called. This would be the same as calling \code{RODBC::sqlQuery()}.
 }
   \item{addl_text}{
 (character(1) | default = NULL)
@@ -54,7 +54,7 @@ Nicholas Alonzo
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{sqlBatchInsert}, \link{sqlRowsAffected}, \link{sqlErrors}}
 }
 \examples{
 driver = "driver={SQL Server};"
@@ -72,9 +72,9 @@ dftest = data.frame(nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
                     chars2 = c("m", "r", ".", NA_character_, "b", "u", "n", "g", "l", "e"),
                     stringsAsFactors = FALSE)
 
-# refer to sqlBatchInserts() example
+# refer to sqlBatchInsert() example
 sqlQuery(db_conn, "CREATE TABLE #dftest (nums int, chars char(1));")
-sqlBatchInserts(db_conn, dftest, table = "#dftest", query_tmpl = "(NULLIF(?, ''), '?')", 
+sqlBatchInsert(db_conn, dftest, table = "#dftest", query_tmpl = "(NULLIF(?, ''), '?')", 
                 cols = c("nums1", "chars2"), nrows = 5, preview = FALSE)
 
 ## Example 1: Commit after prompt

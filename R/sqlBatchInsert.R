@@ -1,7 +1,7 @@
-sqlBatchInserts <- function(db_conn, df, dbtable, vals_tmpl, nrecords = 1000) {
+sqlBatchInsert <- function(db_conn, df, dbtable, vals_tmpl, nrecords = 1000) {
   
   # retrieve parameterized "INSERT INTO" statements
-  batch_inserts = sqlBatchInsertsBuilder(df, dbtable, vals_tmpl, nrecords)
+  batch_inserts = sqlBatchInsertBuilder(df, dbtable, vals_tmpl, nrecords)
   
   # begin transaction
   RODBC::odbcSetAutoCommit(db_conn, autoCommit = FALSE)

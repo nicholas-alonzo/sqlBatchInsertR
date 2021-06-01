@@ -5,16 +5,16 @@
 The number of rows affected
 }
 \description{
-The number of rows affected in a database table after 1 is returned by \code{sqlBatchInserts()} or \code{sqlTransaction()}.
+The number of rows affected in a database table after 1 is returned by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
 }
 \usage{
 sqlRowsAffected()
 }
 
 \details{
-After a statement is successfully executed by \code{sqlBatchInserts()} or \code{sqlTransaction()}, the rows affected are stored in the enviroment, \code{rowsaff_env}.
+After a statement is successfully executed by \code{sqlBatchInsert()} or \code{sqlTransaction()}, the rows affected are stored in the enviroment, \code{rowsaff_env}.
 
-Calling \code{sqlRowsAffected()} will return the number of rows affected and then clear the environment until \code{sqlBatchInserts()} or \code{sqlTransaction()} returns 1. **If \code{sqlRowsAffected()} is called again sequentially, the result will be NULL.
+Calling \code{sqlRowsAffected()} will return the number of rows affected and then clear the environment until \code{sqlBatchInsert()} or \code{sqlTransaction()} returns 1. **If \code{sqlRowsAffected()} is called again sequentially, the result will be NULL.
 }
 \value{
 Returns an integer, reflecting the number of rows affected from a SQL statement or NULL. 
@@ -32,7 +32,7 @@ Nicholas Alonzo
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{sqlBatchInserts}, \link{sqlTransaction}}
+\code{\link{sqlBatchInsert}, \link{sqlTransaction}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
@@ -57,7 +57,7 @@ dftest = data.frame(
 values_template = "(?, '?', ?, '?')"
 
 
-# Test 1 - Using sqlBatchInserts()
+# Test 1 - Using sqlBatchInsert()
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT, 
@@ -67,7 +67,7 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
 sqlRowsAffected()
 
 

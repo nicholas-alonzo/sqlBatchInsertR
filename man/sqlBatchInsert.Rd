@@ -1,18 +1,18 @@
-\name{sqlBatchInserts}
+\name{sqlBatchInsert}
 \alias{sqlBatchInsertR}
 
 \title{
 Insert a data frame into a database table in batches
 }
 \description{
-\code{sqlBatchInserts()} inserts values of a data frame into a database table in one transaction using a list of parameterized \code{INSERT INTO} statements.
+\code{sqlBatchInsert()} inserts values of a data frame into a database table in one transaction using a list of parameterized \code{INSERT INTO} statements.
 
-\code{sqlBatchInsertsBuilder()} converts a data frame to parameterized \code{INSERT INTO} statements for \code{sqlBatchInserts()}.
+\code{sqlBatchInsertBuilder()} converts a data frame to parameterized \code{INSERT INTO} statements for \code{sqlBatchInsert()}.
 }
 \usage{
-sqlBatchInserts(db_conn, df, dbtable, vals_tmpl, nrecords = 1000)
+sqlBatchInsert(db_conn, df, dbtable, vals_tmpl, nrecords = 1000)
 
-sqlBatchInsertsBuilder(df, dbtable, vals_tmpl, nrecords = 1000)
+sqlBatchInsertBuilder(df, dbtable, vals_tmpl, nrecords = 1000)
 }
 
 \arguments{
@@ -43,14 +43,14 @@ The number of records to be inserted per batch. As stated in \href{https://techn
 }
 }
 \details{
-A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. In the process of building the statements, NA values in character columns are updated to an empty string. Non-character columns (ideally numeric) are coerced to character and NA values are changed to NULL. If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlStatementErrors()}.
+A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. In the process of building the statements, NA values in character columns are updated to an empty string. Non-character columns (ideally numeric) are coerced to character and NA values are changed to NULL. If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlErrors()}.
 
 The values being inserted will follow the order of the data frame columns and should reflect the order of the database table columns respectively. **The names of the columns in the data frame do not have to match the names of the columns in the database table.
 }
 \value{
-\code{sqlBatchInserts()} returns 1 on success and -1 on failure.
+\code{sqlBatchInsert()} returns 1 on success and -1 on failure.
 
-\code{sqlBatchInsertsBuilder()} returns a list of parameterized \code{INSERT INTO} statements.
+\code{sqlBatchInsertBuilder()} returns a list of parameterized \code{INSERT INTO} statements.
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -63,7 +63,7 @@ Inserting data into a temporary table has been the best use for the function. It
 }
 
 \seealso{
-\code{\link{sqlTransaction}, \link{sqlRowsAffected}}, \code{\link{sqlStatementErrors}}
+\code{\link{sqlTransaction}, \link{sqlRowsAffected}}, \code{\link{sqlErrors}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
@@ -98,7 +98,7 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
@@ -114,8 +114,8 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
-sqlStatementErrors()
+sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")

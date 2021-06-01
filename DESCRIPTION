@@ -6,5 +6,6 @@ Date: 2018-08-07
 Author: Nicholas Alonzo
 Maintainer: Nicholas Alonzo <nicholas@diversifyds.org>
 Description: This is an extension to the RODBC function sqlQuery()
-Suggests: 
+Imports:
+    RODBC (>= 1.3)
 License: What license is it under?

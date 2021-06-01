@@ -1,27 +1,23 @@
-\name{sqlStatementErrors}
+\name{sqlErrors}
 \alias{sqlBatchInsertR}
 
 \title{
 A list of ODBC errors
 }
 \description{
-\code{sqlStatementErrors()} returns ODBC errors captured when -1 is returned by \code{sqlBatchInserts()} or \code{sqlTransaction()}.
+\code{sqlErrors()} returns ODBC errors captured when -1 is returned by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
 }
 \usage{
-sqlStatementErrors()
+sqlErrors()
 }
 
 \details{
-After a statement fails to execute by \code{sqlBatchInserts()} or \code{sqlTransaction()}, the erorrs are stored in the enviroment, \code{error_env}. 
+After a statement fails to execute by \code{sqlBatchInsert()} or \code{sqlTransaction()}, the erorrs are stored in the enviroment, \code{error_env}. 
 
-Calling \code{sqlStatementErrors()} will return the errors from \code{error_env} as a list  and then clear the environment until \code{sqlBatchInserts()} or \code{sqlTransaction()} returns -1. **Only one set of errors will be stored from \code{sqlBatchInserts()} or \code{sqlTransaction()}, never both.
+Calling \code{sqlErrors()} will return the errors from \code{error_env} as a list  and then clear the environment until \code{sqlBatchInsert()} or \code{sqlTransaction()} returns -1. **If \code{sqlErrors()} is called again sequentially, the result will be an empty list. Only one set of errors will be stored from \code{sqlBatchInsert()} or \code{sqlTransaction()}, never both.
 }
 \value{
-For \code{sqlBatchInserts()}:\cr
-\code{$`1` \cr [1] ... [Microsoft][ODBC Driver 17 for SQL Server][SQL Server] ...} 
-
-For \code{sqlTransaction()}:\cr
-\code{$Errors \cr [1] ... [Microsoft][ODBC Driver 17 for SQL Server][SQL Server] ...}
+Returns a list of ODBC errors or an empty list.
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -36,7 +32,7 @@ Nicholas Alonzo
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{sqlBatchInserts}, \link{sqlTransaction}, \link{sqlRowsAffected}}
+\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
@@ -61,7 +57,7 @@ dftest = data.frame(
 values_template = "(?, '?', ?, '?')"
 
 
-# Test 1 - Using sqlBatchInserts()
+# Test 1 - Using sqlBatchInsert()
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT NOT NULL, 
@@ -71,8 +67,8 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
-sqlStatementErrors()
+sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
@@ -87,10 +83,10 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
 sqlRowsAffected()
 sqlTransaction(db_conn, "UPDATE #dbtest SET chars = 'abc' WHERE nums IS NULL;")
-sqlStatementErrors()
+sqlErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
