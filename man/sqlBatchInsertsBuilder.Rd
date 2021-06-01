@@ -5,61 +5,52 @@
 %%  ~~function to do ... ~~
 }
 \description{
-\code{sqlBatchInserts()} inserts values from a data frame into a database table through one transaction using a list of parameterized \code{INSERT INTO} statements.
+\code{sqlBatchInserts()} inserts values of a data frame into a database table in one transaction using a list of parameterized \code{INSERT INTO} statements.
 
-\code{sqlBatchInsertsBuilder()} prepares and returns the list of parameterized \code{INSERT INTO} statements to \code{sqlBatchInserts()}.
+\code{sqlBatchInsertsBuilder()} converts a data frame to parameterized \code{INSERT INTO} statements for \code{sqlBatchInserts()}.
 }
 \usage{
-sqlBatchInserts(db_conn, df, table, vals_tmpl, cols = NULL, nrows = 1000, preview = FALSE)
+sqlBatchInserts(db_conn, df, table, vals_tmpl, nrows = 1000)
 
-sqlBatchInsertsBuilder(df, table, vals_tmpl, cols = NULL, nrows = 1000, preview = FALSE)
+sqlBatchInsertsBuilder(df, table, vals_tmpl, nrows = 1000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{db_conn}{
 (RODBC)
 
-The connected database connection handle returned by RODBC's \code{odbcConnect()} or \code{odbcDriverConnect()} to be used for inserting data into a database table.
+A open database connection handle returned by RODBC's \code{odbcConnect()} or \code{odbcDriverConnect()} to be used for inserting data into a database table.
 }
   \item{df}{
 (data frame)
 
-A data frame containing values to be inserted into a database table through a connected database connection. The data frame should contain only character or numeric values.
+A data frame containing values to be inserted into a database table through a open database connection. **The data frame should contain only character or numeric values.
 }
   \item{table}{
 (character(1))
 
-A table name accessible from a connected database connection.
+The database table name accessible from a open database connection.
 }
   \item{vals_tmpl}{
 (character(1))
 
-The template for the values to be parameterized on using "?" as the placeholder. If the value is a string data type then wrap the placeholder in single quotes. If the value is a numeric data type then leave the placeholder as is. If there are less placeholders than there are columns in the data frame, the remaining values will not appear in the statement. If there are more placeholders than there are columns in the data frame, an error is returned--, the values will be recycled from the start of the data frame.
-}
-  \item{cols}{
-(character(n) | default = NULL)
-
-A vector of column names to filter and order the values of the data frame. If NULL, the values will follow the order of the columns in the data frame. If not NULL, the values will follow the order of the specified columns. In both cases, the values being inserted should reflect the order of the columns in the database table.
-
+The template for the values to be parameterized on using "?" as the placeholder. If the value is a string data type then wrap the placeholder in single quotes. If the value is a numeric data type then leave the placeholder as is. The number of placeholders must match the number of columns in the dataframe otherwise an error is returned.
 }
   \item{nrows}{
 (integer(1) | default = 1000)
 
 The number of rows to be inserted per batch. As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000." Depending on the size (bytes) of the values per row being inserted, adjusting the number of rows may speed up insertion into the database table.
 }
-  \item{preview}{
-(logical(1) | default = FALSE)
-
-If \code{preview = FALSE}, the \code{INSERT INTO} statements are executed. If \code{preview = TRUE}, the first \code{INSERT INTO} statement will be returned for viewing purposes.
-}
 }
 \details{
-A list of parameterized \code{INSERT INTO} statements are executed in batches through one transaction. If any of the batches fail, the transaction is rolled back. In the process of building the statements, all numeric columns in the data frame are coerced to character. If a value in the data frame is NA, the value in the \code{INSERT INTO} statement will be an empty string. In the case that a missing value is of a numeric data type and the column allows NULL in the database table, consider using \code{NULLIF(?, '')} to NULL the value.
+A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. In the process of building the statements, NA values in character columns are updated to an empty string. Non-character columns (ideally numeric) are coerced to character and NA values are changed to NULL. If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlStatementErrors()}.
+
+The values being inserted will follow the order of the data frame columns and should reflect the order of the database table columns respectively. **The names of the columns in the data frame do not have to match the names of the columns in the database table.
 }
 \value{
-When \code{preview = FALSE}, returns -1 on failure and 1 on success.
+\code{sqlBatchInserts()} returns 1 on success and -1 on failure.
 
-When \code{preview = TRUE}, returns the first \code{INSERT INTO} statement generated by \code{sqlBatchInsertsBuilder()}.
+\code{sqlBatchInsertsBuilder()} returns a list of parameterized \code{INSERT INTO} statements.
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -72,50 +63,62 @@ Inserting data into a temporary table has been the best use for the function. It
 }
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{sqlStatementErrors}}
 }
 \examples{
-driver = "driver={SQL Server};"
-server = "server=testserver;"
-database = "database=testdb;"
-authentication = "trusted_connection=true;"
+# Using a non-standard port to SQL Server 2019
+driver = "Driver={ODBC Driver 17 for SQL Server};"
+server = "Server=127.0.0.1,1401;"
+database = "Database=testdb;"
+uid = "UID=sa;"
+pwd = "PWD=password;"
 
-connection_string = paste0(driver, server, database, authentication)
+connection_string = paste0(driver, server, database, uid, pwd)
+db_conn = RODBC::odbcDriverConnect(connection = connection_string)
 
-db_conn = odbcDriverConnect(connection_string)
+dftest = data.frame(
+  nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
+  chars1 = c("a", "b", "c", "d", "e", "f", "g", "h", "i", ""),
+  nums2 = c(1, 2, 3, 4, NA_integer_, 6, 7, 8, 9, NA_integer_),
+  chars2 = c("m", "r", ".", NA_character_, "b", "u", "n", "g", "l", "e"),
+  stringsAsFactors = FALSE)
 
-dftest = data.frame(nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
-                    chars1 = c("a", "b", "c", "d", "e", "f", "g", "h", "i", ""),
-                    nums2 = c(1, 2, 3, 4, NA_integer_, 6, 7, 8, 9, NA_integer_),
-                    chars2 = c("m", "r", ".", NA_character_, "b", "u", "n", "g", "l", "e"),
-                    stringsAsFactors = FALSE)
-
+# number of placeholders match number of columns in data frame 
+# placeholders are wrapped in single quotes for character column positions
+values_template = "(?, '?', ?, '?')"
 
 
 # Test 1 - Without constraints on columns
-sqlQuery(db_conn, "CREATE TABLE #dftest (nums int, chars char(1));")
+create_table_statement = "
+CREATE TABLE #dftest (
+  nums INT, 
+  chars CHAR(1), 
+  nums2 INT, 
+  chars2 CHAR(1)
+);"
+RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInserts(db_conn, dftest, table = "#dftest", vals_tmpl = "(NULLIF(?, ''), '?')", 
-                cols = c("nums1", "chars2"), nrows = 5, preview = TRUE)
-sqlBatchInserts(db_conn, dftest, table = "#dftest", vals_tmpl = "(NULLIF(?, ''), '?')", 
-                cols = c("nums1", "chars2"), nrows = 5, preview = FALSE)
-
-sqlQuery(db_conn, "SELECT * FROM #dftest;")
-sqlQuery(db_conn, "DROP TABLE #dftest;")
+sqlBatchInserts(db_conn, dftest, "#dftest", values_template, nrows = 5)
+RODBC::sqlQuery(db_conn, "SELECT * FROM #dftest;")
+RODBC::sqlQuery(db_conn, "DROP TABLE #dftest;")
 
 
+# Test 2 - With constraint on columns
+create_table_statement = "
+CREATE TABLE #dftest (
+  nums INT NOT NULL, 
+  chars CHAR(1), 
+  nums2 INT, 
+  chars2 CHAR(1) NOT NULL
+);"
+RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-# Test 2 - With constraint on column
-sqlQuery(db_conn, "CREATE TABLE #dftest (nums int not null, chars char(1));")
+sqlBatchInserts(db_conn, dftest, "#dftest", values_template, nrows = 5)
+sqlStatementErrors()
+RODBC::sqlQuery(db_conn, "DROP TABLE #dftest;")
 
-sqlBatchInserts(db_conn, dftest, table = "#dftest", vals_tmpl = "(NULLIF(?, ''), '?')", 
-                cols = c("nums2", "chars1"), nrows = 2, preview = TRUE)
-sqlBatchInserts(db_conn, dftest, table = "#dftest", vals_tmpl = "(NULLIF(?, ''), '?')", 
-                cols = c("nums2", "chars1"), nrows = 2, preview = FALSE)
-sqlTranErrors()
-sqlQuery(db_conn, "DROP TABLE #dftest;")
 
-close(db_conn)
+RODBC::close(db_conn)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

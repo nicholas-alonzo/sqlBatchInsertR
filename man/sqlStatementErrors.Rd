@@ -1,5 +1,5 @@
-\name{sqlTranErrors}
-\alias{sqlTranErrors}
+\name{sqlStatementErrors}
+\alias{sqlStatementErrors}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,7 +8,7 @@
 MSSQL DB errors captured when -1 is returned by \code{sqlBatchInserts()} or \code{sqlQueryTran()}.
 }
 \usage{
-sqlTranErrors()
+sqlStatementErrors()
 }
 %- maybe also 'usage' for other objects documented here.
 \details{
@@ -57,13 +57,13 @@ sqlQuery(db_conn, "CREATE TABLE #dftest (nums int not null, chars char(1));")
 # 1. sqlBatchInserts()
 sqlBatchInserts(db_conn, dftest, table = "#dftest", query_tmpl = "(NULLIF(?, ''), '?')", 
                 cols = c("nums2", "chars1"), nrows = 2, preview = FALSE)
-sqlTranErrors()
+sqlStatementErrors()
 
 # 2. sqlQueryTran()
 sqlBatchInserts(db_conn, dftest, table = "#dftest", query_tmpl = "(?, '?')", 
                 cols = c("nums2", "chars1"), nrows = 2, preview = FALSE)
 sqlQueryTran(db_conn, "UPDATE #dftest SET nums = NULL WHERE nums = 0;", prompt = TRUE)
-sqlTranErrors()
+sqlStatementErrors()
 
 sqlQuery(db_conn, "DROP TABLE #dftest;")
 close(db_conn)
