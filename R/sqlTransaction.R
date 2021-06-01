@@ -1,4 +1,4 @@
-sqlQueryTran <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) {
+sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) {
   
   # set up error list and begin transaction
   error_list = list()

@@ -24,7 +24,7 @@ sqlBatchInsertsBuilder <- function(df, dbtable, vals_tmpl, nrecords = 1000) {
   flattened_vals_tmpl = gsub("\\?", "%s", flattened_vals_tmpl)
   values = do.call(sprintf, c(flattened_vals_tmpl, df))
 
-  # create batches by number of rows
+  # create batches by number of records
   ngroups = ceiling(nrow(df)/nrecords)
   batches = rep(1:ngroups, each = nrecords, len = nrow(df))
   batch_values = split(values, batches)

@@ -1,8 +1,8 @@
 \name{sqlBatchInserts}
-\alias{sqlBatchInserts}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{sqlBatchInsertR}
+
 \title{
-%%  ~~function to do ... ~~
+Insert a data frame into a database table in batches
 }
 \description{
 \code{sqlBatchInserts()} inserts values of a data frame into a database table in one transaction using a list of parameterized \code{INSERT INTO} statements.
@@ -14,7 +14,7 @@ sqlBatchInserts(db_conn, df, dbtable, vals_tmpl, nrecords = 1000)
 
 sqlBatchInsertsBuilder(df, dbtable, vals_tmpl, nrecords = 1000)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{db_conn}{
 (RODBC)
@@ -24,7 +24,7 @@ A open database connection handle returned by RODBC's \code{odbcConnect()} or \c
   \item{df}{
 (data frame)
 
-A data frame containing values to be inserted into a database table through a open database connection. **The data frame should contain only character or numeric values.
+A data frame containing values to be inserted into a database table through a open database connection. **Ideally, the data frame should be preprocessed and contain only character or numeric columns.
 }
   \item{dbtable}{
 (character(1))
@@ -63,7 +63,7 @@ Inserting data into a temporary table has been the best use for the function. It
 }
 
 \seealso{
-\code{\link{sqlRowsAffected}}, \code{\link{sqlStatementErrors}}
+\code{\link{sqlTransaction}, \link{sqlRowsAffected}}, \code{\link{sqlStatementErrors}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
