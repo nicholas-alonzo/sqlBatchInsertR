@@ -1,7 +1,22 @@
-sqlBatchInsert <- function(db_conn, df, dbtable, vals_tmpl, nrecords = 1000) {
+sqlBatchInsert <- function(db_conn, df, dbtable, nrecords = 1000) {
+  
+  if (!RODBC:::odbcValidChannel(db_conn))
+    stop("First argument (db_conn) is not an open RODBC channel")
+  if (missing(df))
+    stop("Second argument (df) is missing")
+  if (!is.data.frame(df))
+    stop("Second argument (df) must be a data frame")
+  if (missing(dbtable))
+    stop("Third argument (dbtable) is missing")
+  if (!is.character(dbtable) || length(dbtable) != 1)
+    stop("Third argument (dbtable) must be character(1)")
+  if (RODBC::odbcQuery(db_conn, paste("SELECT 1 FROM", dbtable)) == -1L)
+    stop("Third argument (dbtable) does not exist in the database")
+  if (!is.numeric(nrecords) || length(nrecords) != 1)
+    stop ("Fourth argument (nrecords) must be numeric(1)")
   
   # retrieve parameterized "INSERT INTO" statements
-  batch_inserts = sqlBatchInsertBuilder(df, dbtable, vals_tmpl, nrecords)
+  batch_inserts = sqlBatchInsertBuilder(df, dbtable, nrecords)
   
   # begin transaction
   RODBC::odbcSetAutoCommit(db_conn, autoCommit = FALSE)
