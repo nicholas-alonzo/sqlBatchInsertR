@@ -32,7 +32,7 @@ Nicholas Alonzo
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{sqlBatchInsert}, \link{sqlTransaction}}
+\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlOdbcErrors}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
@@ -43,7 +43,7 @@ uid = "UID=testuser;"
 pwd = "PWD=testpassword;"
 
 connection_string = paste0(driver, server, database, uid, pwd)
-db_conn = RODBC::odbcDriverConnect(connection = connection_string)
+dbconn = RODBC::odbcDriverConnect(connection = connection_string)
 
 dftest = data.frame(
   nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
@@ -52,12 +52,6 @@ dftest = data.frame(
   chars2 = c("m", "r", ".", NA_character_, "b", "u", "n", "g", "l", "e"),
   stringsAsFactors = FALSE)
 
-# number of placeholders match number of columns in data frame 
-# placeholders are wrapped in single quotes for character column positions
-values_template = "(?, '?', ?, '?')"
-
-
-# Test 1 - Using sqlBatchInsert()
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT, 
@@ -65,19 +59,21 @@ CREATE TABLE #dbtest (
   nums2 INT, 
   chars2 CHAR(1)
 );"
-RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
+RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+
+## Example 1: Using sqlBatchInsert()
+sqlBatchInsert(dbconn, dftest, "#dbtest", values_template, nrecords = 5)
 sqlRowsAffected()
 
 
-# Test 2 - Using sqlTransaction()
-sqlTransaction(db_conn, "UPDATE #dbtest SET nums = 666;", prompt = FALSE)
+## Example 2: Using sqlTransaction()
+sqlTransaction(dbconn, "UPDATE #dbtest SET nums = 666;", prompt = FALSE)
 sqlRowsAffected()
-RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
 
-RODBC::odbcClose(channel = db_conn)
+RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
+RODBC::odbcClose(channel = dbconn)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

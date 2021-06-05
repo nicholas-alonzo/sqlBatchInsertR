@@ -5,14 +5,14 @@
 Be prompted to commit a SQL statement
 }
 \description{
-Execute a SQL statement through a transaction and be prompted to commit or rollback the results.
+Execute a \code{UPDATE}, \code{INSERT}, or \code{DELETE} SQL statement in a transaction and be prompted to commit or rollback the results.
 }
 \usage{
-sqlTransaction(db_conn, statement, prompt = TRUE, addl_text = NULL)
+sqlTransaction(dbconn, statement, prompt = TRUE, addl_text = NULL)
 }
 
 \arguments{
-  \item{db_conn}{
+  \item{dbconn}{
 (RODBC)
   
 A open database connection handle returned by RODBC's \code{odbcConnect()} or \code{odbcDriverConnect()}.
@@ -20,7 +20,7 @@ A open database connection handle returned by RODBC's \code{odbcConnect()} or \c
   \item{statement}{
 (character(1))
 
-The SQL statement, primarily \code{UPDATE}, \code{INSERT}, or \code{DELETE} commands.
+The \code{UPDATE}, \code{INSERT}, or \code{DELETE} SQL statement.
 }
   \item{prompt}{
 (logical(1) | default = TRUE)
@@ -65,7 +65,7 @@ uid = "UID=testuser;"
 pwd = "PWD=testpassword;"
 
 connection_string = paste0(driver, server, database, uid, pwd)
-db_conn = RODBC::odbcDriverConnect(connection = connection_string)
+dbconn = RODBC::odbcDriverConnect(connection = connection_string)
 
 dftest = data.frame(
   nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
@@ -81,35 +81,35 @@ CREATE TABLE #dbtest (
   nums2 INT, 
   chars2 CHAR(1)
 );"
-RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
-
-# refer to sqlBatchInsert() example
-sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
+RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
+sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
 
 
 ## Example 1: Commit after prompt
-update_stmt = "UPDATE #dbtest SET chars = '.' WHERE nums = 5;"
-sqlTransaction(db_conn, update_stmt, addl_text = "Updating chars field - ")
-# Updating chars field - 1 row(s) affected, commit? (y/n): y
-RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
+update_statement = "UPDATE #dbtest SET chars = '.' WHERE nums = 5;"
+sqlTransaction(dbconn, update_statement, addl_text = "Update chars field - ")
+# Update chars field - 1 row(s) affected, commit? (y/n): y
+sqlRowsAffected()
+RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
 
 
 ## Example 2: Rollback after prompt
-update_stmt = "UPDATE #dbtest SET nums = 6 WHERE chars IN ('m', 'r', 'b');"
-sqlTransaction(db_conn, update_stmt)
-# 3 row(s) affected, commit? (y/n): n
-RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
+update_statement = "UPDATE #dbtest SET nums = 6 WHERE chars IN ('m', 'b');"
+sqlTransaction(dbconn, update_statement)
+# 2 row(s) affected, commit? (y/n): n
+sqlRowsAffected()
+RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
 
 
 ## Example 3: Commit with no prompt
-update_stmt = "UPDATE #dbtest SET nums = 666;"
-sqlTransaction(db_conn, update_stmt, prompt = FALSE)
+update_statement = "UPDATE #dbtest SET nums = 666;"
+sqlTransaction(dbconn, update_statement, prompt = FALSE)
 sqlRowsAffected()
-RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
+RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
 
 
-RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
-RODBC::odbcClose(channel = db_conn)
+RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
+RODBC::odbcClose(channel = dbconn)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

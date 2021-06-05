@@ -16,7 +16,7 @@ sqlBatchInsertBuilder(df, dbtable, nrecords = 1000)
 }
 
 \arguments{
-  \item{db_conn}{
+  \item{dbconn}{
 (RODBC)
 
 A open database connection handle returned by RODBC's \code{odbcConnect()} or \code{odbcDriverConnect()}.
@@ -40,9 +40,9 @@ As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.10
 }
 }
 \details{
-A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. 
+A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. The number of batches are determined by the number of rows in the data frame and \code{nrecords}.
 
-In the process of building the statements, values are interpreted as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are mapped as \strong{numeric}, while all other classes as \strong{string}. The columns interpreted as \strong{string} are quoted to string literals to prevent SQL injections. \code{NA} values are updated to \code{NULL} characters across the data frame. 
+In the process of building the statements, values are mapped as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are interpreted as \strong{numeric}, while all other classes like \code{character}, \code{factor}, \code{Date}, \code{POSIXct}, and \code{POSIXlt} are interpreted as \strong{string}. \strong{String} values are quoted to string literals to prevent SQL injections. \code{NA} values are updated to "NULL" characters across the data frame. 
 
 If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlOdbcErrors()}.
 
@@ -75,7 +75,7 @@ uid = "UID=testuser;"
 pwd = "PWD=testpassword;"
 
 connection_string = paste0(driver, server, database, uid, pwd)
-db_conn = RODBC::odbcDriverConnect(connection = connection_string)
+dbconn = RODBC::odbcDriverConnect(connection = connection_string)
 
 dftest = data.frame(
   nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
@@ -93,12 +93,12 @@ CREATE TABLE #dbtest (
   nums2 INT, 
   chars2 CHAR(1)
 );"
-RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
+RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
+sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
 sqlRowsAffected()
-RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
-RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
+RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
+RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
 
 
 ## Example 2: With constraint on columns
@@ -109,16 +109,16 @@ CREATE TABLE #dbtest (
   nums2 INT, 
   chars2 CHAR(1) NOT NULL
 );"
-RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
+RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
+sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
 sqlOdbcErrors()
 sqlRowsAffected()
-RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
-RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
+RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
+RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
 
 
-RODBC::odbcClose(channel = db_conn)
+RODBC::odbcClose(channel = dbconn)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
