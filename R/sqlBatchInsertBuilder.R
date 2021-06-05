@@ -9,7 +9,7 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   if (!is.character(dbtable) || length(dbtable) != 1)
     stop("Second argument (dbtable) must be character(1)")
   if (!is.numeric(nrecords) || length(nrecords) != 1)
-    stop ("Third argument (nrecords) must be numeric(1)")
+    stop("Third argument (nrecords) must be numeric(1)")
   
   # calculate number of rows and columns
   nrows = nrow(df)
@@ -27,22 +27,13 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   if (length(logical_cols) > 0) df[, logical_cols] = as.integer(df[, logical_cols])
   
   # identify string columns by negating numeric data types
-  string_cols = which(!vapply(
-    df, 
-    dtype_mapper, dtypes = numeric_dtypes, 
-    FUN.VALUE = logical(1)))
-  # replace any single quote with 2 single quotes in string columns
-  df[, string_cols] = vapply(
-    df[, string_cols],
-    gsub, pattern = "'", replacement = "''",
-    FUN.VALUE = character(nrows)
-  )
+  string_cols = which(!vapply(df, dtype_mapper, numeric_dtypes, FUN.VALUE = logical(1)))
+
+  # replace single quote with 2 single quotes in string columns
   # single quote all string columns
-  df[, string_cols] = vapply(
-    df[, string_cols], 
-    sQuote, q = getOption("useFancyQuotes = FALSE"), 
-    FUN.VALUE = character(nrows))
-  
+  quote_strings = function(x) sQuote(gsub("'", "''", x), getOption("useFancyQuotes = FALSE"))
+  df[string_cols] = sapply(df[string_cols], quote_strings)
+
   # fill NA values with NULL **numeric columns are coerced to character
   if (nrow(na_positions) > 0) df[na_positions] <- "NULL"
   
