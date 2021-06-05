@@ -7,45 +7,46 @@ Insert a data frame into a database table in batches
 \description{
 \code{sqlBatchInsert()} inserts values of a data frame into a database table in one transaction using a list of parameterized \code{INSERT INTO} statements.
 
-\code{sqlBatchInsertBuilder()} converts a data frame to parameterized \code{INSERT INTO} statements for \code{sqlBatchInsert()}.
+\code{sqlBatchInsertBuilder()} converts a data frame to a list of parameterized \code{INSERT INTO} statements for \code{sqlBatchInsert()}.
 }
 \usage{
-sqlBatchInsert(db_conn, df, dbtable, vals_tmpl, nrecords = 1000)
+sqlBatchInsert(dbconn, df, dbtable, nrecords = 1000)
 
-sqlBatchInsertBuilder(df, dbtable, vals_tmpl, nrecords = 1000)
+sqlBatchInsertBuilder(df, dbtable, nrecords = 1000)
 }
 
 \arguments{
   \item{db_conn}{
 (RODBC)
 
-A open database connection handle returned by RODBC's \code{odbcConnect()} or \code{odbcDriverConnect()} to be used for inserting data into a database table.
+A open database connection handle returned by RODBC's \code{odbcConnect()} or \code{odbcDriverConnect()}.
 }
   \item{df}{
 (data frame)
 
-A data frame containing values to be inserted into a database table through a open database connection. **Ideally, the data frame should be preprocessed and contain only character or numeric columns.
+A data frame to be inserted into a database table through a open database connection.
 }
   \item{dbtable}{
 (character(1))
 
-The database table name accessible from a open database connection.
-}
-  \item{vals_tmpl}{
-(character(1))
-
-The template for the values to be parameterized on using "?" as the placeholder. If the value is a string data type then wrap the placeholder in single quotes. If the value is a numeric data type then leave the placeholder as is. The number of placeholders must match the number of columns in the dataframe otherwise an error is returned.
+The database table name accessible from the open database connection.
 }
   \item{nrecords}{
 (integer(1) | default = 1000)
 
-The number of records to be inserted per batch. As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000." Depending on the size (bytes) of the values per row being inserted, adjusting the number of rows may speed up insertion into the database table.
+The number of records to be inserted per batch. 
+
+As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000." Depending on the size (bytes) of the values per row being inserted, adjusting the number of rows may speed up insertion into the database table.
 }
 }
 \details{
-A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. In the process of building the statements, NA values in character columns are updated to an empty string. Non-character columns (ideally numeric) are coerced to character and NA values are changed to NULL. If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlErrors()}.
+A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. 
 
-The values being inserted will follow the order of the data frame columns and should reflect the order of the database table columns respectively. **The names of the columns in the data frame do not have to match the names of the columns in the database table.
+In the process of building the statements, values are interpreted as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are mapped as \strong{numeric}, while all other classes as \strong{string}. The columns interpreted as \strong{string} are quoted to string literals to prevent SQL injections. \code{NA} values are updated to \code{NULL} characters across the data frame. 
+
+If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlOdbcErrors()}.
+
+**The values being inserted will follow the order of the data frame columns and should reflect the order of the database table columns respectively. The names of the columns in the data frame do not have to match the names of the columns in the database table.
 }
 \value{
 \code{sqlBatchInsert()} returns 1 on success and -1 on failure.
@@ -63,7 +64,7 @@ Inserting data into a temporary table has been the best use for the function. It
 }
 
 \seealso{
-\code{\link{sqlTransaction}, \link{sqlRowsAffected}}, \code{\link{sqlErrors}}
+\code{\link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}}
 }
 \examples{
 # Using a non-standard port to SQL Server 2019
@@ -83,12 +84,8 @@ dftest = data.frame(
   chars2 = c("m", "r", ".", NA_character_, "b", "u", "n", "g", "l", "e"),
   stringsAsFactors = FALSE)
 
-# number of placeholders match number of columns in data frame 
-# placeholders are wrapped in single quotes for character column positions
-values_template = "(?, '?', ?, '?')"
 
-
-# Test 1 - Without constraints on columns
+## Example 1: Without constraints on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT, 
@@ -98,13 +95,13 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
 
-# Test 2 - With constraint on columns
+## Example 2: With constraint on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT NOT NULL, 
@@ -114,8 +111,8 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
-sqlErrors()
+sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
+sqlOdbcErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "SELECT * FROM #dbtest;")
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")

@@ -1,20 +1,20 @@
-\name{sqlErrors}
+\name{sqlOdbcErrors}
 \alias{sqlBatchInsertR}
 
 \title{
 A list of ODBC errors
 }
 \description{
-\code{sqlErrors()} returns ODBC errors captured when -1 is returned by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
+\code{sqlOdbcErrors()} returns ODBC errors captured when -1 is returned by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
 }
 \usage{
-sqlErrors()
+sqlOdbcErrors()
 }
 
 \details{
 After a statement fails to execute by \code{sqlBatchInsert()} or \code{sqlTransaction()}, the erorrs are stored in the enviroment, \code{error_env}. 
 
-Calling \code{sqlErrors()} will return the errors from \code{error_env} as a list  and then clear the environment until \code{sqlBatchInsert()} or \code{sqlTransaction()} returns -1. **If \code{sqlErrors()} is called again sequentially, the result will be an empty list. Only one set of errors will be stored from \code{sqlBatchInsert()} or \code{sqlTransaction()}, never both.
+Calling \code{sqlOdbcErrors()} will return the errors from \code{error_env} as a list  and then clear the environment until \code{sqlBatchInsert()} or \code{sqlTransaction()} returns -1. **If \code{sqlOdbcErrors()} is called again sequentially, the result will be an empty list. Only one set of errors will be stored from \code{sqlBatchInsert()} or \code{sqlTransaction()}, never both.
 }
 \value{
 Returns a list of ODBC errors or an empty list.
@@ -52,12 +52,9 @@ dftest = data.frame(
   chars2 = c("m", "r", ".", NA_character_, "b", "u", "n", "g", "l", "e"),
   stringsAsFactors = FALSE)
 
-# number of placeholders match number of columns in data frame 
-# placeholders are wrapped in single quotes for character column positions
-values_template = "(?, '?', ?, '?')"
 
-
-# Test 1 - Using sqlBatchInsert()
+## Example 1: Using sqlBatchInsert()
+# With constraints on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT NOT NULL, 
@@ -67,13 +64,14 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
-sqlErrors()
+sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
+sqlOdbcErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 
 
-# Test 2 - Using sqlTransaction()
+## Example 2: Using sqlTransaction()
+# Without constraints on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT, 
@@ -83,10 +81,10 @@ CREATE TABLE #dbtest (
 );"
 RODBC::sqlQuery(channel = db_conn, query = create_table_statement)
 
-sqlBatchInsert(db_conn, dftest, "#dbtest", values_template, nrecords = 5)
+sqlBatchInsert(db_conn, dftest, "#dbtest", nrecords = 5)
 sqlRowsAffected()
 sqlTransaction(db_conn, "UPDATE #dbtest SET chars = 'abc' WHERE nums IS NULL;")
-sqlErrors()
+sqlOdbcErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = db_conn, query = "DROP TABLE #dbtest;")
 

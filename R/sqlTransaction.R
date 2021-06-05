@@ -1,5 +1,16 @@
 sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) {
   
+  if (!RODBC:::odbcValidChannel(db_conn))
+    stop("First argument (db_conn) is not an open RODBC channel")
+  if (missing(statement))
+    stop("Second argument (statement) is missing")
+  if (!grepl("INSERT|UPDATE|DELETE", statement, ignore.case = TRUE))
+    stop("Second argument (statement) must be a INSERT, UPDATE, or DELETE statment")
+  if (!is.logical(prompt) || length(prompt) != 1)
+    stop("Third argument (prompt) must be logical(1)")
+  if (!is.null(addl_text) && (!is.character(addl_text) || length(addl_text) != 1))
+    stop ("Fourth argument (addl_text) must be NULL or character(1)")
+  
   # set up error list and begin transaction
   error_list = list()
   RODBC::odbcSetAutoCommit(db_conn, autoCommit = FALSE)
@@ -11,8 +22,7 @@ sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) 
     errors = RODBC::odbcGetErrMsg(db_conn)
     # error reason: odbc errors, no reason to prompt
     if (any(!grepl("RODBC", errors))) {
-      odbc_errors = errors[!grepl("RODBC", errors)]
-      error_list[["Errors"]] = odbc_errors
+      error_list[["Errors"]] = errors[!grepl("RODBC", errors)]
       # pass the errors to the error environment
       rm(list = ls(error_env), envir = error_env)
       list2env(error_list, error_env)
