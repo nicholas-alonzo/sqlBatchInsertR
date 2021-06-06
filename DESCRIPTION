@@ -1,11 +1,18 @@
 Package: sqlBatchInsertR
-Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Batch Insert Data with Parameterized INSERT Statements
+Description: Batch insert data with parameterized INSERT statements. It aims 
+    to provide a simple and efficient way of inserting a data frame into a 
+    database table. It is made minimal and depends only on the package RODBC
+    for ODBC connectivity.
+Version: 1.0.0
 Date: 2018-08-07
 Author: Nicholas Alonzo
 Maintainer: Nicholas Alonzo <nicholas@diversifyds.org>
-Description: This is an extension to the RODBC function sqlQuery()
+Depends:
+    R (>= 4.0.0),
+    RODBC (>= 1.3.0)
 Imports:
-    RODBC (>= 1.3)
+    RODBC (>= 1.3.0)
 License: What license is it under?
+URL: https://github.com/nicholas-alonzo/sqlBatchInsertR
+BugReports: https://github.com/nicholas-alonzo/sqlBatchInsertR/issues

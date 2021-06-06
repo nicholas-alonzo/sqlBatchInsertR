@@ -27,10 +27,8 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   if (length(logical_cols) > 0) df[, logical_cols] = as.integer(df[, logical_cols])
   
   # identify string columns by negating numeric data types
+  # quote strings to string literals for valid statements
   string_cols = which(!vapply(df, dtype_mapper, numeric_dtypes, FUN.VALUE = logical(1)))
-
-  # replace single quote with 2 single quotes in string columns
-  # single quote all string columns
   quote_strings = function(x) sQuote(gsub("'", "''", x), getOption("useFancyQuotes = FALSE"))
   df[string_cols] = sapply(df[string_cols], quote_strings)
 
@@ -38,8 +36,8 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   if (nrow(na_positions) > 0) df[na_positions] <- "NULL"
   
   # sprintf over data frame using dynamic values template
-  vals_tmpl = paste0("(", paste0(rep("%s", len = ncols), collapse = ","), ")")
-  values = do.call(sprintf, c(vals_tmpl, df))
+  values_template = paste0("(", paste0(rep("%s", len = ncols), collapse = ","), ")")
+  values = do.call(sprintf, c(values_template, df))
   
   # create batches by number of records
   ngroups = ceiling(nrows/nrecords)

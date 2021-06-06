@@ -5,16 +5,14 @@
 sqlBatchInsertR
 }
 \description{
-\strong{sqlBatchInsertR} aims to extend the functionality of the \strong{RODBC} package by providing a simple and effective way of inserting data into a database table.
+sqlBatchInsertR aims to extend the functionality of the RODBC package by providing a simple and efficient way of inserting a data frame into a database table.
 }
 \details{
-There are 2 main wrapper functions, \code{sqlBatchInsert()} and \code{sqlTransaction()}.
+The main function of this package is \code{sqlBatchInsert()}. It inserts a data frame into a database table in a transaction using a list of parameterized \code{INSERT} statements.
 
-\code{sqlBatchInsert()} inserts values from a data frame into a database table in a transaction using a list of parameterized \code{INSERT INTO} statements.
+There are 3 additional functions, \code{sqlTransaction()}, \code{sqlRowsAffected()} and \code{sqlOdbcErrors()}.
 
 \code{sqlTransaction()} prompts the user to commit or rollback the results of a SQL \code{INSERT}, \code{UPDATE}, or \code{DELETE} statement.
-
-There are also 2 helper functions, \code{sqlRowsAffected()} and \code{sqlOdbcErrors()}.
 
 \code{sqlRowsAffected()} returns the number of rows affected in a database table after a statement is successfully executed by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
 
@@ -33,7 +31,7 @@ Nicholas Alonzo
 \examples{
 sqlBatchInsert(dbconn, df, dbtable, nrecords = 1000)
 
-sqlTransaction(db_conn, statement, prompt = TRUE, addl_text = NULL)
+sqlTransaction(dbconn, statement, prompt = TRUE, addl_text = NULL)
 
 sqlRowsAffected()
 

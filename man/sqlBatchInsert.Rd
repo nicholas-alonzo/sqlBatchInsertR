@@ -2,12 +2,12 @@
 \alias{sqlBatchInsertR}
 
 \title{
-Insert a data frame into a database table in batches
+Insert a data frame into a database table
 }
 \description{
-\code{sqlBatchInsert()} inserts values of a data frame into a database table in one transaction using a list of parameterized \code{INSERT INTO} statements.
+\code{sqlBatchInsert()} inserts a data frame into a database table in one transaction using a list of parameterized \code{INSERT} statements.
 
-\code{sqlBatchInsertBuilder()} converts a data frame to a list of parameterized \code{INSERT INTO} statements for \code{sqlBatchInsert()}.
+\code{sqlBatchInsertBuilder()} converts a data frame to a list of parameterized \code{INSERT} statements for \code{sqlBatchInsert()}.
 }
 \usage{
 sqlBatchInsert(dbconn, df, dbtable, nrecords = 1000)
