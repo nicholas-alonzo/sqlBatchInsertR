@@ -8,7 +8,7 @@ Description: sqlBatchInsertR is built on top of the RODBC package and aims
     user to commit or rollback a SQL DML statement. It is made minimal and 
     depends only on the RODBC package.
 Version: 0.1.0
-Date: 2021-06-06
+Date: 2021-06-07
 Author: Nicholas Alonzo
 Maintainer: Nicholas Alonzo <nicholas@diversifyds.org>
 Depends:
