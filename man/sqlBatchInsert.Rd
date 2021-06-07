@@ -43,7 +43,7 @@ As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.10
 \details{
 A list of parameterized \code{INSERT} statements are executed in batches in one transaction. The number of batches are determined by the number of rows in the data frame and the \code{nrecords} argument.
 
-In the process of building the \code{INSERT} statements, values are mapped as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are interpreted as \strong{numeric}, while all other classes like \code{character}, \code{factor}, \code{Date}, \code{POSIXct}, and \code{POSIXlt} are interpreted as \strong{string}. \strong{String} values are quoted to string literals to prevent SQL injections. All \code{NA} values are updated to "NULL" characters. 
+In the process of building the \code{INSERT} statements, values are mapped as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are interpreted as \strong{numeric}, while all other classes like \code{character}, \code{factor}, \code{Date}, \code{POSIXct}, \code{POSIXlt}, and \code{POSIXt} are interpreted as \strong{string}. \strong{String} values are quoted to string literals to prevent SQL injections. All \code{NA} values are updated to "NULL" characters. 
 
 If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlOdbcErrors()}.
 
