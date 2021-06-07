@@ -15,10 +15,6 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   nrows = nrow(df)
   ncols = ncol(df)
   
-  # create a map for numeric data types
-  numeric_dtypes = c("integer", "logical", "numeric")
-  dtype_mapper = function(df, dtypes) class(df) %in% dtypes
-  
   # track any NA values before manipulation
   na_positions = which(is.na(df), arr.ind = TRUE)
   
@@ -26,12 +22,22 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   logical_cols = which(vapply(df, is.logical, FUN.VALUE = logical(1)))
   if (length(logical_cols) > 0) df[, logical_cols] = as.integer(df[, logical_cols])
   
-  # identify string columns by negating numeric data types
-  # quote strings to string literals for valid statements
-  string_cols = which(!vapply(df, dtype_mapper, numeric_dtypes, FUN.VALUE = logical(1)))
-  quote_strings = function(x) sQuote(gsub("'", "''", x), getOption("useFancyQuotes = FALSE"))
-  df[string_cols] = sapply(df[string_cols], quote_strings)
-
+  # identify string columns 
+  string_cols = which(vapply(df, function(x) {
+    is.character(x) || is.factor(x) || 
+      inherits(x, "Date") || inherits(x, "POSIXct") ||
+      inherits(x, "POSIXlt") || inherits(x, "POSIXt")
+  }, FUN.VALUE = logical(1)))
+  # quote string for valid statements
+  df[string_cols] = sapply(df[string_cols], function(x) {
+    if (is.character(x) || is.factor(x)) {
+      sQuote(gsub("'", "''", x), getOption("useFancyQuotes = FALSE"))
+    } else if (inherits(x, "Date") || inherits(x, "POSIXct") ||
+               inherits(x, "POSIXlt") || inherits(x, "POSIXt")) {
+      sQuote(x, getOption("useFancyQuotes = FALSE"))
+    }
+  })
+  
   # fill NA values with NULL **numeric columns are coerced to character
   if (nrow(na_positions) > 0) df[na_positions] <- "NULL"
   
