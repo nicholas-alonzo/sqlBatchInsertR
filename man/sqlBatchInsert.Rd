@@ -6,7 +6,7 @@
 Insert a data frame into a database table
 }
 \description{
-\code{sqlBatchInsert()} inserts a data frame into a database table in one transaction using a list of parameterized \code{INSERT} statements.
+\code{sqlBatchInsert()} inserts a data frame into a database table in a transaction using a list of parameterized \code{INSERT} statements.
 
 \code{sqlBatchInsertBuilder()} converts a data frame to a list of parameterized \code{INSERT} statements for \code{sqlBatchInsert()}.
 }
@@ -41,9 +41,9 @@ As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.10
 }
 }
 \details{
-A list of parameterized \code{INSERT INTO} statements are executed in batches in one transaction. The number of batches are determined by the number of rows in the data frame and \code{nrecords}.
+A list of parameterized \code{INSERT} statements are executed in batches in one transaction. The number of batches are determined by the number of rows in the data frame and the \code{nrecords} argument.
 
-In the process of building the statements, values are mapped as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are interpreted as \strong{numeric}, while all other classes like \code{character}, \code{factor}, \code{Date}, \code{POSIXct}, and \code{POSIXlt} are interpreted as \strong{string}. \strong{String} values are quoted to string literals to prevent SQL injections. \code{NA} values are updated to "NULL" characters across the data frame. 
+In the process of building the \code{INSERT} statements, values are mapped as \strong{numeric} or \strong{string} using data frame column classes. The classes \code{integer}, \code{logical}, and \code{numeric} are interpreted as \strong{numeric}, while all other classes like \code{character}, \code{factor}, \code{Date}, \code{POSIXct}, and \code{POSIXlt} are interpreted as \strong{string}. \strong{String} values are quoted to string literals to prevent SQL injections. All \code{NA} values are updated to "NULL" characters. 
 
 If any of the batches fail, the transaction is rolled back. Errors that occured in any batches can be viewed using \code{sqlOdbcErrors()}.
 
@@ -52,31 +52,23 @@ If any of the batches fail, the transaction is rolled back. Errors that occured 
 \value{
 \code{sqlBatchInsert()} returns 1 on success and -1 on failure.
 
-\code{sqlBatchInsertBuilder()} returns a list of parameterized \code{INSERT INTO} statements.
+\code{sqlBatchInsertBuilder()} returns a list of parameterized \code{INSERT} statements.
 }
 \references{
-%% ~put references to the literature/web site here ~
+\href{https://github.com/nicholas-alonzo/sqlBatchInsertR/wiki}{sqlBatchInsertR Wiki}
 }
 \author{
 Nicholas Alonzo
 }
 \note{
-Inserting data into a temporary table has been the best use for the function. It mimics the data frame and allows users to write direct SQL commands that can be processed by the DBMS itself.
+\code{sqlBatchInsertBuilder()} is an internal function not exported from the NAMESPACE. You can use \code{sqlBatchInsertR:::sqlBatchInsertBuilder()} to access.
 }
-
 \seealso{
-\code{\link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}}
+\code{\link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
 }
 \examples{
-# Using a non-standard port to SQL Server 2019
-driver = "Driver={ODBC Driver 17 for SQL Server};"
-server = "Server=127.0.0.1,1401;"
-database = "Database=testdb;"
-uid = "UID=testuser;"
-pwd = "PWD=testpassword;"
-
-connection_string = paste0(driver, server, database, uid, pwd)
-dbconn = RODBC::odbcDriverConnect(connection = connection_string)
+\dontrun{
+dbconn = RODBC::odbcDriverConnect(connection = "connection_string")
 
 dftest = data.frame(
   nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
@@ -86,7 +78,7 @@ dftest = data.frame(
   stringsAsFactors = FALSE)
 
 
-## Example 1: Without constraints on columns
+# Example 1: Without constraints on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT, 
@@ -95,14 +87,13 @@ CREATE TABLE #dbtest (
   chars2 CHAR(1)
 );"
 RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
-
-sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
+sqlBatchInsert(dbconn, dftest, "#dbtest")
 sqlRowsAffected()
 RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
 RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
 
 
-## Example 2: With constraint on columns
+# Example 2: With constraint on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT NOT NULL, 
@@ -111,8 +102,7 @@ CREATE TABLE #dbtest (
   chars2 CHAR(1) NOT NULL
 );"
 RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
-
-sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
+sqlBatchInsert(dbconn, dftest, "#dbtest")
 sqlOdbcErrors()
 sqlRowsAffected()
 RODBC::sqlQuery(channel = dbconn, query = "SELECT * FROM #dbtest;")
@@ -121,7 +111,4 @@ RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
 
 RODBC::odbcClose(channel = dbconn)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}

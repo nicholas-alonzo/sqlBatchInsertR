@@ -2,48 +2,36 @@
 \alias{sqlOdbcErrors}
 
 \title{
-A list of ODBC errors
+Return a list of ODBC errors
 }
 \description{
-\code{sqlOdbcErrors()} returns ODBC errors captured when -1 is returned by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
+\code{sqlOdbcErrors()} returns a list of ODBC errors when \code{sqlBatchInsert()} or \code{sqlTransaction()} fails to execute.
 }
 \usage{
 sqlOdbcErrors()
 }
 
 \details{
-After a statement fails to execute by \code{sqlBatchInsert()} or \code{sqlTransaction()}, the ODBC erorrs are stored in the enviroment, \code{error_env}. 
+After \code{sqlBatchInsert()} or \code{sqlTransaction()} fails to execute, the ODBC erorrs are stored in the enviroment, \code{error_env}. 
 
-Calling \code{sqlOdbcErrors()} will return the errors from \code{error_env} as a list and then clear the environment until \code{sqlBatchInsert()} or \code{sqlTransaction()} returns -1. **If \code{sqlOdbcErrors()} is called again sequentially, the result will be an empty list. Only one set of errors will be stored from \code{sqlBatchInsert()} or \code{sqlTransaction()}, never both.
+Calling \code{sqlOdbcErrors()} will return the errors from \code{error_env} as a list and then clear the environment. **If \code{sqlOdbcErrors()} is called again sequentially, the result will be an empty list. Only one set of errors will be stored from \code{sqlBatchInsert()} or \code{sqlTransaction()}, never both.
 }
 \value{
 Returns a list of ODBC errors or an empty list.
 }
 \references{
-%% ~put references to the literature/web site here ~
+\href{https://github.com/nicholas-alonzo/sqlBatchInsertR/wiki}{sqlBatchInsertR Wiki}
 }
 \author{
 Nicholas Alonzo
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}}
+\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}, \link[RODBC:sqlQuery]{sqlQuery}}
 }
 \examples{
-# Using a non-standard port to SQL Server 2019
-driver = "Driver={ODBC Driver 17 for SQL Server};"
-server = "Server=127.0.0.1,1401;"
-database = "Database=testdb;"
-uid = "UID=testuser;"
-pwd = "PWD=testpassword;"
-
-connection_string = paste0(driver, server, database, uid, pwd)
-dbconn = RODBC::odbcDriverConnect(connection = connection_string)
+\dontrun{
+dbconn = RODBC::odbcDriverConnect(connection = "connection_string")
 
 dftest = data.frame(
   nums1 = c(1, 9, 8, 5, 2, NA_integer_, 1, 9, 9, 9),
@@ -53,8 +41,7 @@ dftest = data.frame(
   stringsAsFactors = FALSE)
 
 
-## Example 1: Using sqlBatchInsert()
-# With constraints on columns
+# Example 1: Using sqlBatchInsert() with constraints on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT NOT NULL, 
@@ -63,15 +50,12 @@ CREATE TABLE #dbtest (
   chars2 CHAR(1) NOT NULL
 );"
 RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
-
-sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
+sqlBatchInsert(dbconn, dftest, "#dbtest")
 sqlOdbcErrors()
-sqlRowsAffected()
 RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
 
 
-## Example 2: Using sqlTransaction()
-# Without constraints on columns
+# Example 2: Using sqlTransaction() without constraints on columns
 create_table_statement = "
 CREATE TABLE #dbtest (
   nums INT, 
@@ -80,18 +64,11 @@ CREATE TABLE #dbtest (
   chars2 CHAR(1)
 );"
 RODBC::sqlQuery(channel = dbconn, query = create_table_statement)
-
-sqlBatchInsert(dbconn, dftest, "#dbtest", nrecords = 5)
-sqlRowsAffected()
+sqlBatchInsert(dbconn, dftest, "#dbtest")
 sqlTransaction(dbconn, "UPDATE #dbtest SET chars = 'abc' WHERE nums IS NULL;")
 sqlOdbcErrors()
-sqlRowsAffected()
 RODBC::sqlQuery(channel = dbconn, query = "DROP TABLE #dbtest;")
 
 
 RODBC::odbcClose(channel = dbconn)
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}}

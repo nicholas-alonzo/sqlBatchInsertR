@@ -1,11 +1,14 @@
 Package: sqlBatchInsertR
-Title: Batch Insert Data with Parameterized INSERT Statements
-Description: Batch insert data with parameterized INSERT statements. It aims 
-    to provide a simple and efficient way of inserting a data frame into a 
-    database table. It is made minimal and depends only on the package RODBC
-    for ODBC connectivity.
+Title: SQL DML Support for RODBC
+Description: sqlBatchInsertR is built on top of the RODBC package and aims 
+    to extend its functionality. It provides an efficient way of inserting 
+    a data frame into a database table and handling SQL DML statements. The 
+    function sqlBatchInsert sends batches of parameterized INSERT statements 
+    to a database in a transaction. The function sqlTransaction prompts a 
+    user to commit a SQL DML statement. The package is made minimal and 
+    depends only on the RODBC package.
 Version: 1.0.0
-Date: 2018-08-07
+Date: 2021-06-06
 Author: Nicholas Alonzo
 Maintainer: Nicholas Alonzo <nicholas@diversifyds.org>
 Depends:

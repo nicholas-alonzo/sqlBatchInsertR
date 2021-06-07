@@ -5,18 +5,21 @@
 sqlBatchInsertR
 }
 \description{
-sqlBatchInsertR aims to extend the functionality of the RODBC package by providing a simple and efficient way of inserting a data frame into a database table.
+sqlBatchInsertR aims to extend the functionality of the \link[RODBC:RODBC]{RODBC} package by providing an efficient way of inserting a data frame into a database table and handling SQL DML statements.
 }
 \details{
-The main function of this package is \code{sqlBatchInsert()}. It inserts a data frame into a database table in a transaction using a list of parameterized \code{INSERT} statements.
+Below are the main functions of the package.
 
-There are 3 additional functions, \code{sqlTransaction()}, \code{sqlRowsAffected()} and \code{sqlOdbcErrors()}.
+\code{sqlBatchInsert()} inserts a data frame into a database table in a transaction using a list of parameterized \code{INSERT} statements.
 
 \code{sqlTransaction()} prompts the user to commit or rollback the results of a SQL \code{INSERT}, \code{UPDATE}, or \code{DELETE} statement.
 
-\code{sqlRowsAffected()} returns the number of rows affected in a database table after a statement is successfully executed by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
+\code{sqlRowsAffected()} returns the number of rows affected in a database table when \code{sqlBatchInsert()} or \code{sqlTransaction()} are successfully executed.
 
-\code{sqlOdbcErrors()} returns ODBC errors after a statement fails to execute by \code{sqlBatchInsert()} or \code{sqlTransaction()}.
+\code{sqlOdbcErrors()} returns a list of ODBC errors after \code{sqlBatchInsert()} or \code{sqlTransaction()} fails to execute.
+}
+\references{
+\href{https://github.com/nicholas-alonzo/sqlBatchInsertR/wiki}{sqlBatchInsertR Wiki}
 }
 \author{
 Nicholas Alonzo
@@ -25,7 +28,7 @@ Nicholas Alonzo
 \keyword{ package }
 \seealso{
 
-\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}}
+\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
 
 }
 \examples{
