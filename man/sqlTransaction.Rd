@@ -50,7 +50,7 @@ Returns -1 on failure, 0 when no records are affected, and 1 on success.
 Nicholas Alonzo
 }
 \seealso{
-\code{\link{sqlBatchInsert}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
+\code{\link{sqlBatchInsert}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:odbcConnect]{odbcConnect}, \link[RODBC:odbcDriverConnect]{odbcDriverConnect}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
 }
 \examples{
 \dontrun{

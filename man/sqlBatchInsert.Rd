@@ -64,7 +64,7 @@ Nicholas Alonzo
 \code{sqlBatchInsertBuilder()} is an internal function not exported from the NAMESPACE. You can use \code{sqlBatchInsertR:::sqlBatchInsertBuilder()} to access.
 }
 \seealso{
-\code{\link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
+\code{\link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:odbcConnect]{odbcConnect}, \link[RODBC:odbcDriverConnect]{odbcDriverConnect}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
 }
 \examples{
 \dontrun{

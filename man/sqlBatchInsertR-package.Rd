@@ -28,7 +28,7 @@ Nicholas Alonzo
 \keyword{ package }
 \seealso{
 
-\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
+\code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}, \link{sqlOdbcErrors}, \link[RODBC:odbcConnect]{odbcConnect}, \link[RODBC:odbcDriverConnect]{odbcDriverConnect}, \link[RODBC:sqlQuery]{sqlQuery}, \link[RODBC:odbcSetAutoCommit]{odbcSetAutoCommit}, \link[RODBC:odbcEndTran]{odbcEndTran}}
 
 }
 \examples{

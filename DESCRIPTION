@@ -5,9 +5,9 @@ Description: sqlBatchInsertR is built on top of the RODBC package and aims
     a data frame into a database table and handling SQL DML statements. The 
     function sqlBatchInsert sends batches of parameterized INSERT statements 
     to a database in a transaction. The function sqlTransaction prompts a 
-    user to commit a SQL DML statement. The package is made minimal and 
+    user to commit or rollback a SQL DML statement. It is made minimal and 
     depends only on the RODBC package.
-Version: 1.0.0
+Version: 0.1.0
 Date: 2021-06-06
 Author: Nicholas Alonzo
 Maintainer: Nicholas Alonzo <nicholas@diversifyds.org>
