@@ -1,5 +1,5 @@
 \name{sqlTransaction}
-\alias{sqlBatchInsertR}
+\alias{sqlTransaction}
 
 \title{
 Be prompted to commit a SQL statement

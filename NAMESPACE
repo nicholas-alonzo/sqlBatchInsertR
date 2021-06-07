@@ -1,6 +1,5 @@
-export(sqlBatchInsertBuilder)
 export(sqlBatchInsert)
 export(sqlTransaction)
 export(sqlRowsAffected)
 export(sqlOdbcErrors)
-import(ROBC)
+import(RODBC)

@@ -13,6 +13,7 @@ Depends:
     RODBC (>= 1.3.0)
 Imports:
     RODBC (>= 1.3.0)
-License: What license is it under?
+License: GPL-2
 URL: https://github.com/nicholas-alonzo/sqlBatchInsertR
 BugReports: https://github.com/nicholas-alonzo/sqlBatchInsertR/issues
+LazyData: true

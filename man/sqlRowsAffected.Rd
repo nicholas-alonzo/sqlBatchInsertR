@@ -1,5 +1,5 @@
 \name{sqlRowsAffected}
-\alias{sqlBatchInsertR}
+\alias{sqlRowsAffected}
 
 \title{
 The number of rows affected

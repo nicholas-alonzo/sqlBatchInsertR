@@ -44,7 +44,7 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   batches = rep(1:ngroups, each = nrecords, len = nrows)
   batch_values = split(values, batches)
   
-  # return batches of "INSERT INTO" statements
+  # return batches of INSERT statements
   lapply(batch_values, function(values) {
     records = paste0(values, collapse = ",")
     paste0("INSERT INTO ", dbtable, " VALUES ", records, ";")

@@ -1,5 +1,6 @@
 \name{sqlBatchInsert}
-\alias{sqlBatchInsertR}
+\alias{sqlBatchInsert}
+\alias{sqlBatchInsertBuilder}
 
 \title{
 Insert a data frame into a database table

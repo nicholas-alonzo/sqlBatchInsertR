@@ -1,5 +1,5 @@
 \name{sqlOdbcErrors}
-\alias{sqlBatchInsertR}
+\alias{sqlOdbcErrors}
 
 \title{
 A list of ODBC errors
