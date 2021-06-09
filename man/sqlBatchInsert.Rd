@@ -33,11 +33,9 @@ A data frame to be inserted into a database table through a open database connec
 The database table name accessible from the open database connection.
 }
   \item{nrecords}{
-(integer(1) | default = 1000)
+(numeric(1) | default = 1000)
 
-The number of records to be inserted per batch. 
-
-As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000." Depending on the size (bytes) of the values per row being inserted, adjusting the number of rows may speed up insertion into the database table.
+The number of records to be inserted per batch. \code{nrecords} must be a number from 1 to 1000. As stated in \href{https://technet.microsoft.com/en-us/library/ms187905(v=sql.105).aspx}{Microsoft's SQL Server documentation}, "the maximum number of rows that can be inserted in a single \code{INSERT} statement is 1000."
 }
 }
 \details{

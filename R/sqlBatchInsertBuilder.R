@@ -8,8 +8,8 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
     stop("Second argument (dbtable) is missing")
   if (!is.character(dbtable) || length(dbtable) != 1)
     stop("Second argument (dbtable) must be character(1)")
-  if (!is.numeric(nrecords) || length(nrecords) != 1)
-    stop("Third argument (nrecords) must be numeric(1)")
+  if (!is.numeric(nrecords) || length(nrecords) != 1 || !(nrecords %in% seq(1, 1000)))
+    stop ("Third argument (nrecords) must be numeric(1) from 1 to 1000")
   
   # calculate number of rows and columns
   nrows = nrow(df)
