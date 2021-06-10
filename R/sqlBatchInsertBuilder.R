@@ -21,7 +21,7 @@ sqlBatchInsertBuilder <- function(df, dbtable, nrecords = 1000) {
   # coerce any logical columns to integer
   logical_cols = which(vapply(df, is.logical, logical(1)))
   if (length(logical_cols) > 0) 
-    df[logical_cols] = as.integer(df[logical_cols])
+    df[logical_cols] = sapply(df[logical_cols], as.integer)
   
   # identify string columns 
   string_cols = which(vapply(df, function(x) {
