@@ -1,19 +1,19 @@
 # sqlBatchInsertR
 
-sqlBatchInsertR is built on top of the RODBC package and aims to extend its functionality. It provides an efficient way of inserting a data frame into a database table and handling SQL DML statements. 
+sqlBatchInsertR provides an efficient way of inserting a data frame into a database table and handling SQL DML statements. It is built on top of the RODBC package and aims to extend its functionality.
 
-__This has currently been tested for use with Microsoft SQL Server.__
+__This has *currently* been tested for use with Microsoft SQL Server.__
 
 ## Inspiration and Motivation
 
-In the summer of 2016 I volunteered at a non-profit community health clinic not knowing it would eventually be the start to a full-time career. My first big project was to compare Excel records to records in a MS SQL Server database.
+In the summer of 2016 I volunteered at a non-profit community health clinic not knowing it would be the start to a full-time career. My first big project was to compare monthly Excel records to records in a Microsoft SQL Server database. To accomplish the task, I used R and the RODBC package. 
 
-To accomplish the task, I used R and the RODBC package. Once handled, the next phase was to keep track of the Excel records in more detail. This involved data modeling and designing an ETL process. One of the challenges I came across was the increasing amount of data in the Excel files. The RODBC package offers ```sqlSave()``` for writing to database tables, but it couldn't keep up with the demand. I wasn't the only one that noticed; there were others raising this issue on Stack Overflow, but no coded solution provided.
+The next phase was to track the Excel records in more detail. This involved data modeling and designing an ETL process. One of the challenges at this point was the data frame to database writing time. RODBC offers ```sqlSave()```, but it couldn't keep up with the demand. I wasn't the only one that noticed; others raised this issue on Stack Overflow, but no coded solution was proposed.
 
-This is when I had the inspiration to write my own functions that could load data more efficiently into a database table. I started writing code in 2017 until I reached the solution of creating batches of parameterized INSERT statements. It was a *__major__* speed up and I became reliant on it for other projects. The code lived in a few scripts until I decided to build it out as an internal package in 2018.
+This is when I had the inspiration to write my own functions. I started writing the code in 2017 until I reached a solution of creating batches of parameterized INSERT statements. It was a *__major__* speed boost and I became reliant on it for other projects. The code lived in a few scripts until I started building it out as an internal package in 2018.
 
-It's now 2021 and I've decided to open source the package in hopes it'll be useful to others. What's nice about it is that it's minimal. Only base R is used for data manipulation and RODBC for database connectivity. I'm certain there's more enhancements that can be made, so feel free to start a discussion [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/enhancements). 
-
+It's now 2021 and I've decided to open source the package in hopes it'll be useful to others. What's nice about it is that it's minimal and quite simple. Only base R is used for data manipulation and RODBC for database connectivity.
+ 
 ## Prerequisites
 
 - [R](https://cloud.r-project.org/) (>= 4.0.0)
@@ -66,7 +66,7 @@ devtools::install_github("nicholas-alonzo/sqlBatchInsertR", dependencies = TRUE)
 
 ## Usage and Features
 
-__This has currently been tested for use with Microsoft SQL Server.__
+__This has *currently* been tested for use with Microsoft SQL Server.__
 
 Below are the main functions of the package. 
 
@@ -83,12 +83,12 @@ sqlTransaction(dbconn, statement, prompt = TRUE, addl_text = NULL)
 ```r
 sqlRowsAffected()
 ```
-- Returns the number of rows affected in a database table when sqlBatchInsert() or sqlTransaction() are successfully executed.
+- Returns the number of rows affected in a database table when ```sqlBatchInsert()``` or ```sqlTransaction()``` are successfully executed.
 
 ```r
 sqlOdbcErrors()
 ```
-- Returns a list of ODBC errors after sqlBatchInsert() or sqlTransaction() fails to execute.
+- Returns a list of ODBC errors after ```sqlBatchInsert()``` or ```sqlTransaction()``` fails to execute.
 
 ## Documentation
 
