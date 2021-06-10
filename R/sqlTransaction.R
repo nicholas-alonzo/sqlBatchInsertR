@@ -1,7 +1,7 @@
-sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) {
+sqlTransaction <- function(dbconn, statement, prompt = TRUE, addl_text = NULL) {
   
-  if (!RODBC:::odbcValidChannel(db_conn))
-    stop("First argument (db_conn) is not an open RODBC channel")
+  if (!RODBC:::odbcValidChannel(dbconn))
+    stop("First argument (dbconn) is not an open RODBC channel")
   if (missing(statement))
     stop("Second argument (statement) is missing")
   if (!grepl("INSERT|UPDATE|DELETE", statement, ignore.case = TRUE))
@@ -13,13 +13,13 @@ sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) 
   
   # set up error list and begin transaction
   error_list = list()
-  RODBC::odbcSetAutoCommit(db_conn, autoCommit = FALSE)
+  RODBC::odbcSetAutoCommit(dbconn, autoCommit = FALSE)
   
-  status = RODBC::odbcQuery(db_conn, statement)
+  status = RODBC::odbcQuery(dbconn, statement)
   
   if (status == -1) {
     # retrieve errors
-    errors = RODBC::odbcGetErrMsg(db_conn)
+    errors = RODBC::odbcGetErrMsg(dbconn)
     # error reason: odbc errors, no reason to prompt
     if (any(!grepl("RODBC", errors))) {
       error_list[["Errors"]] = errors[!grepl("RODBC", errors)]
@@ -27,22 +27,22 @@ sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) 
       rm(list = ls(error_env), envir = error_env)
       list2env(error_list, error_env)
       # rollback and set auto commit back to default
-      RODBC::odbcEndTran(db_conn, commit = FALSE)
-      RODBC::odbcSetAutoCommit(db_conn, autoCommit = TRUE)
+      RODBC::odbcEndTran(dbconn, commit = FALSE)
+      RODBC::odbcSetAutoCommit(dbconn, autoCommit = TRUE)
       return(-1)
     } else {
       # error reason: no data affected, no reason to prompt
-      RODBC::odbcEndTran(db_conn, commit = FALSE)
-      RODBC::odbcSetAutoCommit(db_conn, autoCommit = TRUE)
+      RODBC::odbcEndTran(dbconn, commit = FALSE)
+      RODBC::odbcSetAutoCommit(dbconn, autoCommit = TRUE)
       return(0)
     }
   } else {
-    ROWCOUNT = RODBC::sqlQuery(db_conn, "SELECT @@ROWCOUNT AS RC")[["RC"]]
+    ROWCOUNT = RODBC::sqlQuery(dbconn, "SELECT @@ROWCOUNT AS RC")[["RC"]]
     
     if (prompt == FALSE) {
       # commit and set auto commit back to default
-      RODBC::odbcEndTran(db_conn, commit = TRUE)
-      RODBC::odbcSetAutoCommit(db_conn, autoCommit = TRUE)
+      RODBC::odbcEndTran(dbconn, commit = TRUE)
+      RODBC::odbcSetAutoCommit(dbconn, autoCommit = TRUE)
       return(1)
     } else if (prompt == TRUE) {
       # retrieve user input
@@ -58,16 +58,16 @@ sqlTransaction <- function(db_conn, statement, prompt = TRUE, addl_text = NULL) 
       
       if (response == "y") {
         # commit and set auto commit back to default
-        RODBC::odbcEndTran(db_conn, commit = TRUE)
-        RODBC::odbcSetAutoCommit(db_conn, autoCommit = TRUE)
+        RODBC::odbcEndTran(dbconn, commit = TRUE)
+        RODBC::odbcSetAutoCommit(dbconn, autoCommit = TRUE)
         # populate the environment with rows affected
         rm(list = ls(rowsaff_env), envir = rowsaff_env)
         rowsaff_env$ROWCOUNT = ROWCOUNT
         return(1)
       } else {
         # rollback and set auto commit back to default
-        RODBC::odbcEndTran(db_conn, commit = FALSE)
-        RODBC::odbcSetAutoCommit(db_conn, autoCommit = TRUE)
+        RODBC::odbcEndTran(dbconn, commit = FALSE)
+        RODBC::odbcSetAutoCommit(dbconn, autoCommit = TRUE)
         return(0)
       }
     }
