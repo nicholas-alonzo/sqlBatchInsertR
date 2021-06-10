@@ -2,17 +2,7 @@
 
 sqlBatchInsertR is built on top of the RODBC package and aims to extend its functionality. It provides an efficient way of inserting a data frame into a database table and handling SQL DML statements. 
 
-__This has currently been tested for the Microsoft SQL Server environment and is still in a pre-release state.__
-
-## Table of Contents
-
-1. [Inspiration and Motivation](#inspiration-and-motivation)
-2. [Prerequisites](#prerequisites)
-3. [Installation](#installation)
-4. [Usage and Features](#usage-and-features)
-5. [Documentation](#documentation)
-6. [Contributing](#contributing)
-7. [License](#license)
+__This has currently been tested for use with Microsoft SQL Server.__
 
 ## Inspiration and Motivation
 
@@ -23,9 +13,6 @@ To accomplish the task, I used R and the RODBC package. Once handled, the next p
 This is when I had the inspiration to write my own functions that could load data more efficiently into a database table. I started writing code in 2017 until I reached the solution of creating batches of parameterized INSERT statements. It was a *__major__* speed up and I became reliant on it for other projects. The code lived in a few scripts until I decided to build it out as an internal package in 2018.
 
 It's now 2021 and I've decided to open source the package in hopes it'll be useful to others. What's nice about it is that it's minimal. Only base R is used for data manipulation and RODBC for database connectivity. I'm certain there's more enhancements that can be made, so feel free to start a discussion [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/enhancements). 
-
-Nicholas Alonzo  
-6/8/2021
 
 ## Prerequisites
 
@@ -78,7 +65,8 @@ devtools::install_github("nicholas-alonzo/sqlBatchInsertR", dependencies = TRUE)
 	```
 
 ## Usage and Features
-__This has currently been tested for the Microsoft SQL Server environment and is still in a pre-release state.__
+
+__This has currently been tested for use with Microsoft SQL Server.__
 
 Below are the main functions of the package. 
 
@@ -109,11 +97,11 @@ Please refer to the
 
 ## Contributing
 
-- Share ideas for feature __enhancements__ [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/enhancements). 
-- Raise __issues__ regarding functionality and share solutions [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/issues).
-- Chat about anything and everything [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/general).
-- Ask for __help__ and share solutions [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/help).
-- Share with me if this package helped you [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/kind-words).
+- 🦾 Share ideas for feature enhancements [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/enhancements). 
+- ‼️ Raise issues regarding functionality and share solutions [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/issues).
+- 📓 Chat about anything and everything [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/general).
+- ✋ Ask for help and share solutions [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/help).
+- 💌 Share with me if this package is helpful [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/kind-words).
 
 ## License
 sqlBatchInsertR is released under the [GNU General Public License v2.0](https://github.com/nicholas-alonzo/sqlBatchInsertR/blob/main/LICENSE).
