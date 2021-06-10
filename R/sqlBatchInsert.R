@@ -13,7 +13,7 @@ sqlBatchInsert <- function(db_conn, df, dbtable, nrecords = 1000) {
   if (RODBC::odbcQuery(db_conn, paste("SELECT 1 FROM", dbtable)) == -1L)
     stop(dbtable, " does not exist in the database")
   if (!is.numeric(nrecords) || length(nrecords) != 1 || !(nrecords %in% seq(1, 1000)))
-    stop ("Fourth argument (nrecords) must be numeric(1) from 1 to 1000")
+    stop("Fourth argument (nrecords) must be numeric(1) from 1 to 1000")
   
   # retrieve parameterized "INSERT INTO" statements
   batch_inserts = sqlBatchInsertBuilder(df, dbtable, nrecords)
