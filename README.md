@@ -2,7 +2,7 @@
 
 sqlBatchInsertR provides an efficient way of inserting a data frame into a database table and handling SQL DML statements. It is built on top of the RODBC package and aims to extend its functionality.
 
-__This has *currently* been tested for use with Microsoft SQL Server.__
+__This has *currently* been tested for use with Microsoft SQL Server and is in development.__
 
 ## Inspiration and Motivation
 
@@ -66,7 +66,7 @@ devtools::install_github("nicholas-alonzo/sqlBatchInsertR", dependencies = TRUE)
 
 ## Usage and Features
 
-__This has *currently* been tested for use with Microsoft SQL Server.__
+__This has *currently* been tested for use with Microsoft SQL Server and is in development.__
 
 Below are the main functions of the package. 
 

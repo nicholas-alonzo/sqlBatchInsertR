@@ -7,16 +7,17 @@ Description: sqlBatchInsertR is built on top of the RODBC package and aims
     to a database in a transaction. The function sqlTransaction prompts a 
     user to commit or rollback a SQL DML statement. It is made minimal and 
     depends only on the RODBC package.
-Version: 0.1.0
-Date: 2021-06-07
-Author: Nicholas Alonzo
+Version: 0.0.0.9000
+Date: 2021-06-13
+Authors@R: c(
+    person("Nicholas", "Alonzo", role = c("aut", "cre"), email = "nicholas@diversifyds.org"),
+    person("Brian", "Ripley", role = "aut"),
+    person("Michael", "Lapsley", role = "aut")
+  )
 Maintainer: Nicholas Alonzo <nicholas@diversifyds.org>
 Depends:
     R (>= 4.0.0),
     RODBC (>= 1.3.0)
-Imports:
-    RODBC (>= 1.3.0)
-License: GPL-2
+License: GPL-2 | file LICENSE
 URL: https://github.com/nicholas-alonzo/sqlBatchInsertR
 BugReports: https://github.com/nicholas-alonzo/sqlBatchInsertR/issues
-LazyData: true

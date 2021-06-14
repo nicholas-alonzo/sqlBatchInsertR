@@ -32,6 +32,7 @@ Nicholas Alonzo
 
 }
 \examples{
+\dontrun{
 sqlBatchInsert(dbconn, df, dbtable, nrecords = 1000)
 
 sqlTransaction(dbconn, statement, prompt = TRUE, addl_text = NULL)
@@ -39,4 +40,5 @@ sqlTransaction(dbconn, statement, prompt = TRUE, addl_text = NULL)
 sqlRowsAffected()
 
 sqlOdbcErrors()
+}
 }
