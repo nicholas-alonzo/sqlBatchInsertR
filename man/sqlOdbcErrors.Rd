@@ -25,7 +25,9 @@ Returns a list of ODBC errors or an empty list.
 \author{
 Nicholas Alonzo
 }
-
+\note{
+\code{error_env} is an internal variable not exported from the NAMESPACE.
+}
 \seealso{
 \code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlRowsAffected}, \link[RODBC:sqlQuery]{sqlQuery}}
 }

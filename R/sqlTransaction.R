@@ -9,7 +9,7 @@ sqlTransaction <- function(dbconn, statement, prompt = TRUE, addl_text = NULL) {
   if (!is.logical(prompt) || length(prompt) != 1)
     stop("Third argument (prompt) must be logical(1)")
   if (!is.null(addl_text) && (!is.character(addl_text) || length(addl_text) != 1))
-    stop ("Fourth argument (addl_text) must be NULL or character(1)")
+    stop("Fourth argument (addl_text) must be NULL or character(1)")
   
   # set up error list and begin transaction
   error_list = list()

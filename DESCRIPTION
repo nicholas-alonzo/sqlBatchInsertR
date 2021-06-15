@@ -20,4 +20,4 @@ Depends:
     RODBC (>= 1.3.0)
 License: GPL-2 | file LICENSE
 URL: https://github.com/nicholas-alonzo/sqlBatchInsertR
-BugReports: https://github.com/nicholas-alonzo/sqlBatchInsertR/issues
+BugReports: https://github.com/nicholas-alonzo/sqlBatchInsertR/discussions/categories/issues

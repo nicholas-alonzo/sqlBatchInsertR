@@ -1,18 +1,18 @@
 # sqlBatchInsertR
 
-sqlBatchInsertR provides an efficient way of inserting a data frame into a database table and handling SQL DML statements. It is built on top of the RODBC package and aims to extend its functionality.
+`sqlBatchInsertR` provides an efficient way of inserting a data frame into a database table and handling SQL DML statements. It is built on top of the `RODBC `package and aims to extend its functionality.
 
 __This has *currently* been tested for use with Microsoft SQL Server and is in development.__
 
 ## Inspiration and Motivation
 
-In the summer of 2016 I volunteered at a non-profit community health clinic not knowing it would be the start to a full-time career. My first big project was to compare monthly Excel records to records in a Microsoft SQL Server database. To accomplish the task, I used R and the RODBC package. 
+In the summer of 2016 I volunteered at a non-profit community health clinic not knowing it would be the start to a full-time career. My first big project was to compare monthly Excel records to records in a Microsoft SQL Server database. To accomplish the task, I used R and the `RODBC` package. 
 
-The next phase was to track the Excel records in more detail. This involved data modeling and designing an ETL process. One of the challenges at this point was the data frame to database writing time. RODBC offers ```sqlSave()```, but it couldn't keep up with the demand. I wasn't the only one that noticed; others raised this issue on Stack Overflow, but no coded solution was proposed.
+The next phase was to track the Excel records in more detail. This involved data modeling and designing an ETL process. One of the challenges at this point was the data frame to database writing time. `RODBC` offers `sqlSave()`, but it couldn't keep up with the demand. I wasn't the only one that noticed; others raised this issue on Stack Overflow, but no coded solution was proposed.
 
-This is when I had the inspiration to write my own functions. I started writing the code in 2017 until I reached a solution of creating batches of parameterized INSERT statements. It was a *__major__* speed boost and I became reliant on it for other projects. The code lived in a few scripts until I started building it out as an internal package in 2018.
+This is when I had the inspiration to write my own functions. I started writing the code in 2017 until I reached a solution of creating batches of parameterized INSERT statements. It was a *__major__* speed up and I became reliant on it for other projects. The code lived in a few scripts until I started building it out as an internal package in 2018.
 
-It's now 2021 and I've decided to open source the package in hopes it'll be useful to others. What's nice about it is that it's minimal and quite simple. Only base R is used for data manipulation and RODBC for database connectivity.
+It's now 2021 and I've decided to open source the package in hopes it'll be useful to others. What's nice about it is that it's minimal. Only base R is used for data manipulation and `RODBC` for database connectivity.
  
 ## Prerequisites
 
@@ -21,30 +21,36 @@ It's now 2021 and I've decided to open source the package in hopes it'll be usef
 
 ## Installation
 
-### In Release: Source Package
+1. Install `RODBC` if necessary. In R, copy the following code into the console and press __Enter__.
+
+	```r
+	install.packages("RODBC")
+	```
+
+### In Release: Using Source Package
 
 1. Download the source package (tar.gz) of the current release [here](https://github.com/nicholas-alonzo/sqlBatchInsertR/releases).
 
 2. In R, copy the following code into the console. 
 
 	```r
-	install.packages("sqlBatchInsertR_#.#.#.tar.gz", repos = NULL, type = "source", dependencies = TRUE)
+	install.packages("sqlBatchInsertR_#.tar.gz", repos = NULL, type = "source")
 	```
 3. Change the first argument to be the path of the downloaded (tar.gz) file and press __Enter__.
 
-### In Development (Option 1): `devtools` 
+### In Development: Using `devtools` 
 
-The R package `devtools` allows users to install packages from GitHub. In R, copy the following code into the console and press __Enter__.
+The R package `devtools` allows users to install packages directly from GitHub. In R, copy the following code into the console and press __Enter__.
 
 ```r
 # install devtools if necessary
 install.packages("devtools")
 
 # install sqlBatchInsertR and dependent package from the GitHub repository
-devtools::install_github("nicholas-alonzo/sqlBatchInsertR", dependencies = TRUE)
+devtools::install_github("nicholas-alonzo/sqlBatchInsertR")
 ```
 
-### In Development (Option 2): Command Line
+### In Development: Using Command Line
 
 1. Install [Git](http://git-scm.com/downloads) if necessary.
 

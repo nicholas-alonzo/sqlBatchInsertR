@@ -25,7 +25,9 @@ Returns a number reflecting the number of rows affected or NULL.
 \author{
 Nicholas Alonzo
 }
-
+\note{
+\code{rowsaff_env} is an internal variable not exported from the NAMESPACE.
+}
 \seealso{
 \code{\link{sqlBatchInsert}, \link{sqlTransaction}, \link{sqlOdbcErrors}, \link[RODBC:sqlQuery]{sqlQuery}}
 }
